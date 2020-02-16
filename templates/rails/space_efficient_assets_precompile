@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Space efficient assets precompilation
+# Installs nodejs and yarn only as build dependencies and removes them after assets are compiled
+
+build_dependencies="nodejs yarn"
+
+apk add --update $build_dependencies \
+  && bundle exec rake assets:precompile \
+  && apk del $build_dependencies \
+  && rm -rf node_modules /usr/local/share/.cache/yarn /var/cache/apk/* /tmp/v8-compile-cache-* /tmp/yarn-*

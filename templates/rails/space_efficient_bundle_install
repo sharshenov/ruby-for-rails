@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Space efficient installation of gems
+# Gems build dependencies are removed after "bundle install" is finished.
+# Pass list of additional build-time dependencies `bundle_install_with_cleanup git sqlite-dev`
+
+build_dependencies="make gcc libc-dev libxml2-dev libxslt-dev postgresql-dev $@"
+
+apk add --update $build_dependencies \
+  && bundle install --jobs=3 --retry=3 --without development test \
+  && apk del $build_dependencies \
+  && rm -rf /usr/local/bundle/cache/ /root/.bundle/cache/ \
+  && find /usr/local/bundle/gems/ -name "*.c" -o -name "*.o" -delete \
+  && rm -rf /var/cache/apk/*
